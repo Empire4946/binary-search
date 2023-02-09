@@ -1,0 +1,107 @@
+local arrayValueBullet = 5 -- what value you want to be multiplied
+local arrayListTimes = 500 -- how many times you want the value to be multiplied
+
+--@empirebinary
+local function calcMiddle(left, right, floorFunc)
+    local floor = floorFunc or math.floor
+    return floor((left + right) / 2)
+    end
+    
+    local function performBinarySearch(array, target, left, right, calcMiddleFunc, compareFunc)
+    if left > right then
+    return false
+    end
+    
+    local middle = calcMiddleFunc(left, right)
+    local comparisonResult = compareFunc(array[middle], target)
+    
+    if comparisonResult == 0 then
+        return true
+    elseif comparisonResult > 0 then
+        return performBinarySearch(array, target, left, middle - 1, calcMiddleFunc, compareFunc)
+    else
+        return performBinarySearch(array, target, middle + 1, right, calcMiddleFunc, compareFunc)
+    end
+    end
+    
+    local function retrieveValue(inputFunc)
+    local input = inputFunc or io.read
+    print("Enter the value to search for:")
+    local value = input("*n")
+    return value
+    end
+    
+    local function retrieveArray(arrayGenerator)
+    local arr = arrayGenerator and arrayGenerator() or {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    return arr
+    end
+    
+    local function displaySearchResult(result, displayFunc)
+    local display = displayFunc or (function(result)
+    if result then
+    print("Value found in array")
+    else
+    print("Value not found in array")
+    end
+    end)
+    display(result)
+    end
+    
+    local function validateInput(value)
+    if type(value) ~= "number" then
+    print("Invalid input, please enter a valid number.")
+    return false
+    end
+    return true
+    end
+    
+    local function generateArray()
+    local arr = {}
+    for i = 1, arrayListTimes do
+    arr[i] = i * arrayValueBullet
+    end
+    return arr
+    end
+    
+    local function logArray(arr)
+    print("Generated Array:")
+    for i = 1, #arr do
+    print(arr[i])
+    end
+    end
+    
+    local value = retrieveValue()
+    
+    if validateInput(value) then
+    local arr = retrieveArray(generateArray)
+    logArray(arr)
+    local searchResult = performBinarySearch(arr, value, 1, #arr, calcMiddle, function(a, b) return a - b end)
+    displaySearchResult(searchResult)
+    end
+    
+    local function validateArray(arr)
+    if #arr == 0 then
+    print("Array is empty. Please provide a valid array.")
+    return false
+    end
+    return true
+    end
+    
+    local function sortArray(arr, sortFunc)
+    local sort = sortFunc or table.sort
+    sort(arr, function(a, b) return a < b end)
+    end
+    
+    local function startSearch()
+    local value = retrieveValue()
+
+    if validateInput(value) then
+        local arr = retrieveArray(generateArray)
+        if validateArray(arr) then
+            sortArray(arr)
+            logArray(arr)
+            local searchResult = performBinarySearch(arr, value, 1, #arr, calcMiddle, function(a, b) return a - b end)
+            displaySearchResult()
+        end
+    end
+end
